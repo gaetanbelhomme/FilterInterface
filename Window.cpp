@@ -27,6 +27,7 @@ void Window::ManageWindow()
         ManageBox1();
         ManageBox2();
         ManageBox3();
+        ManageBox4();
     setLayout(mainlayout);
 
 }
@@ -132,8 +133,6 @@ void Window::ManageBox2_2()
         browse2 = new QPushButton("Select folder");
         browse1->setToolTip(".jpeg .jpg .png");
         browse1->setToolTipDuration(2000);
-        browse1->setStyleSheet("background-color: rgb(127, 131, 131)");
-        browse2->setStyleSheet("background-color: rgb(127, 131, 131)");
 
         layoutbox2_2->addWidget(browse1);
         layoutbox2_2->addWidget(browse2);
@@ -153,15 +152,53 @@ void Window::ManageBox3()
         layoutbox3 = new QHBoxLayout;
 
         confirm = new QPushButton("Confirm");
-        confirm->setStyleSheet("background-color: rgb(127, 131, 131)");
         cancel = new QPushButton("Quit");
-        cancel->setStyleSheet("background-color: rgb(127, 131, 131)");
 
         layoutbox3->addWidget(confirm);
         layoutbox3->addWidget(cancel);
     m_Box3->setLayout(layoutbox3);
 }
 
+
+
+/** "Box 4" Tab :
+ *              *QGroupBox display "Original image"
+ *              *QGroupBox display2 "Filltered image"
+**/
+void Window::ManageBox4()
+{
+    display = new QGroupBox;
+    display2 = new QGroupBox;
+    display->setMinimumHeight(200);
+
+
+    tab.addTab(display,"Original image");
+    tab.addTab(display2,"Filtered image");
+    mainlayout->addWidget(&tab);
+
+    tab.hide();
+}
+
+
+
+/** Display images (only for 2D image) when user confirm **/
+void Window::Display()
+{
+
+    if(Dimension == 2)
+    {
+        std::string inputname = "border-image: url(" + filenameInput->text().toStdString() + ") 3 10 3 10";
+        std::string outputname = "border-image: url(" + folder.toStdString() + '/' + filenameOutput->text().toStdString() + exten + ") 3 10 3 10";
+        tab.show();
+        display->setStyleSheet(QString::fromStdString(inputname));
+        display2->setStyleSheet(QString::fromStdString(outputname));
+    }
+    else
+    {
+        tab.hide();
+        this->adjustSize();
+    }
+}
 
 
 /** Checkboxs connect :
@@ -245,9 +282,12 @@ void Window::OpenFile()
     if(file.isNull())
         QMessageBox::information(this, "File", "You have selected nothing");
     else
+    {
         QMessageBox::information(this, "File", "You have selected :\n" + file);
+        filenameInput->setText(file);
+    }
 
-    filenameInput->setText(file);
+
 }
 
 
@@ -365,6 +405,9 @@ void Window::Confirm()
 
         //Filter processing
         Filter(Dimension,filenameInput->text().toStdString(),Neighbours,filenameOutput->text().toStdString(),folder.toStdString());
+
+        //Display results
+        Display();
     }
 
 }

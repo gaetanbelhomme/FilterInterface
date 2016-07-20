@@ -13,6 +13,7 @@
 #include <QCompleter>
 #include <QDirModel>
 #include <QFileInfo>
+#include <QTabWidget>
 
 
 
@@ -107,9 +108,19 @@ private:
             QPushButton *confirm;
             QPushButton *cancel;
 
+        /** "Box 4"  Tab : Images display **/
+        void ManageBox4();
+        QTabWidget tab;
+        QGroupBox *display;
+        QGroupBox *display2;
+        /** Display images when user confirms (only 2D image) **/
+        void Display();
 
 
 };
+
+
+
 
 
 #endif

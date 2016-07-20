@@ -1,0 +1,36 @@
+QPushButton
+{
+    background-color: rgb(74, 107, 138);
+
+}
+
+QGroupBox::title
+{
+    color:rgb(74, 107, 138);
+}
+QGroupBox
+{
+;
+}
+
+
+
+QCheckBox
+{
+    color:black;
+}
+
+QCheckBox:hover
+{
+    color:grey;
+}
+
+QCheckBox:checked
+{
+    color: rgb(32, 81, 104);
+}
+
+
+
+
+
