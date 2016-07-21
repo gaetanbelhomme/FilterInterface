@@ -81,8 +81,13 @@ std::string SetOutputName(std::string exten, std::string name, std::string path)
 
 
 
+
+
+
+
 /** launch filter */
-void Filter(int dim, std::string InputFile, int neighbours, std::string OutputName, std::string Outputpath)
+template<typename ImageType>
+void Filter(std::string InputFile, int neighbours, std::string OutputName, std::string Outputpath)
 {
     /** Get Dimension & extension */
 
@@ -93,73 +98,55 @@ void Filter(int dim, std::string InputFile, int neighbours, std::string OutputNa
     std::string OutputFile = SetOutputName(exten, OutputName, Outputpath);
 
 
-    if(dim == 2)
-    {
-        /** Init **/
-        typedef unsigned char PixelType;
-        const unsigned int Dimension = 2;
+    typedef itk::ImageFileReader<ImageType>         ReaderType;
+    typedef itk::ImageFileWriter<ImageType>         WriterType;
+    typedef SmoothingFilter<ImageType>              FilterType;
 
-        typedef itk::Image<PixelType,Dimension >        ImageType;
-        typedef itk::ImageFileReader<ImageType>         ReaderType;
-        typedef itk::ImageFileWriter<ImageType>         WriterType;
-        typedef SmoothingFilter<ImageType>              FilterType;
-
-        ReaderType::Pointer reader = ReaderType::New();
-        WriterType::Pointer writer = WriterType::New();
-        FilterType::Pointer filter = FilterType::New();
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+    typename FilterType::Pointer filter = FilterType::New();
 
 
-        filter->NbNeighbours = neighbours;
+    filter->NbNeighbours = neighbours;
 
-        /** Read **/
-        reader->SetFileName(InputFile);
-        reader->Update();
-
-
-        /** Filter **/
-        filter->SetInput(reader->GetOutput());
-        filter->Update();
-
-        /** Writer **/
-        writer->SetInput(filter->GetOutput());
-        writer->SetFileName(OutputFile);
-        writer->Update();
-
-    }
+    /** Read **/
+    reader->SetFileName(InputFile);
+    reader->Update();
 
 
+    /** Filter **/
+    filter->SetInput(reader->GetOutput());
+    filter->Update();
 
-    else
-    {
-        /** Init **/
-        typedef float PixelType;
-        const unsigned int Dimension = 3;
+    /** Writer **/
+    writer->SetInput(filter->GetOutput());
+    writer->SetFileName(OutputFile);
+    writer->Update();
 
-        typedef itk::Image<PixelType, Dimension>        ImageType;
-        typedef itk::ImageFileReader<ImageType>         ReaderType;
-        typedef itk::ImageFileWriter<ImageType>         WriterType;
-        typedef SmoothingFilter<ImageType>              FilterType;
-
-        ReaderType::Pointer reader = ReaderType::New();
-        WriterType::Pointer writer = WriterType::New();
-        FilterType::Pointer filter = FilterType::New();
-
-        /** Read **/
-        reader->SetFileName(InputFile);
-        reader->Update();
-
-        /** Filter **/
-        filter->SetInput(reader->GetOutput());
-        filter->Update();
-
-        /** Writer **/
-        writer->SetInput(filter->GetOutput());
-        writer->SetFileName(OutputFile);
-        writer->Update();
-   }
 
     return;
 
+}
+
+
+
+/** Determine the image type */
+void TypeImageFilterDefine(int dim, std::string InputFile, int neighbours, std::string OutputName, std::string Outputpath)
+{
+    if(dim ==2)
+    {
+        typedef unsigned char PixelType;
+        const unsigned int Dimension = 2;
+        typedef itk::Image<PixelType,Dimension> TImage;
+        Filter<TImage>(InputFile, neighbours, OutputName, Outputpath);
+    }
+    else
+    {
+        typedef float PixelType;
+        const unsigned int Dimension = 3;
+        typedef itk::Image<PixelType,Dimension> TImage;
+        Filter<TImage>(InputFile, neighbours, OutputName, Outputpath);
+    }
 }
 
 

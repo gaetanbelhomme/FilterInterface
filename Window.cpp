@@ -404,7 +404,7 @@ void Window::Confirm()
 
 
         //Filter processing
-        Filter(Dimension,filenameInput->text().toStdString(),Neighbours,filenameOutput->text().toStdString(),folder.toStdString());
+        TypeImageFilterDefine(Dimension,filenameInput->text().toStdString(),Neighbours,filenameOutput->text().toStdString(),folder.toStdString());
 
         //Display results
         Display();
