@@ -113,7 +113,7 @@ typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_4(ImageConstPoint
 template<typename TImage>
 typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_8(ImageConstPointer input, ConstIterator inputIterator)
 {
-    TPixel  mean=0;
+    int  mean=0;
     TIndex PixelIndexCurrent;
     PixelIndexCurrent = inputIterator.GetIndex();
 
