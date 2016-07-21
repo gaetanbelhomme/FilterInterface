@@ -8,6 +8,7 @@
 #include "../../ITK/Modules/IO/ImageBase/include/itkImageFileReader.h"
 #include "../../ITK/Modules/IO/ImageBase/include/itkImageFileWriter.h"
 #include "../../ITK/Modules/Bridge/VtkGlue/include/QuickView.h"
+#include "itkRGBPixel.h"
 
 
 template< typename TImage>
@@ -135,14 +136,14 @@ void TypeImageFilterDefine(int dim, std::string InputFile, int neighbours, std::
 {
     if(dim ==2)
     {
-        typedef unsigned char PixelType;
+        typedef itk::RGBPixel<unsigned char> PixelType;
         const unsigned int Dimension = 2;
         typedef itk::Image<PixelType,Dimension> TImage;
         Filter<TImage>(InputFile, neighbours, OutputName, Outputpath);
     }
     else
     {
-        typedef float PixelType;
+        typedef itk::RGBPixel<float> PixelType;
         const unsigned int Dimension = 3;
         typedef itk::Image<PixelType,Dimension> TImage;
         Filter<TImage>(InputFile, neighbours, OutputName, Outputpath);

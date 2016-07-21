@@ -74,9 +74,9 @@ void SmoothingFilter<TImage>::GenerateData(){
 template<typename TImage>
 typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_4(ImageConstPointer input, ConstIterator inputIterator)
 {
-    float mean = input->GetPixel(inputIterator.GetIndex());
+    itk::RGBPixel<float> mean = input->GetPixel(inputIterator.GetIndex());
     if(TImage::GetImageDimension()==2)
-        int mean = input->GetPixel(inputIterator.GetIndex());
+        itk::RGBPixel<int> mean = input->GetPixel(inputIterator.GetIndex());
 
 
     TIndex PixelIndexCurrent;
@@ -84,24 +84,27 @@ typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_4(ImageConstPoint
 
     for(unsigned int i = 0; i<inputIterator.GetIndex().GetIndexDimension(); i++)
     {
+        for(unsigned int j = 0; j<3; j++)
+        {
+
+            PixelIndexCurrent = inputIterator.GetIndex();
+
+            /** PixelIndex - 1 */
+            PixelIndexCurrent[i] = inputIterator.GetIndex()[i]-1;
+
+            mean[j] = (mean[j] + input->GetPixel(PixelIndexCurrent)[j]);
 
 
-        PixelIndexCurrent = inputIterator.GetIndex();
+            /** PixelIndex + 1 */
+            PixelIndexCurrent[i] = inputIterator.GetIndex()[i]+1;
 
-        /** PixelIndex - 1 */
-        PixelIndexCurrent[i] = inputIterator.GetIndex()[i]-1;
-
-        mean = (mean + input->GetPixel(PixelIndexCurrent));
-
-
-        /** PixelIndex + 1 */
-        PixelIndexCurrent[i] = inputIterator.GetIndex()[i]+1;
-
-        mean = (mean + input->GetPixel(PixelIndexCurrent));
+            mean[j] = (mean[j] + input->GetPixel(PixelIndexCurrent)[j]);
+        }
 
         count += 2;
     }
-    mean = mean/(float)count;
+    for(unsigned k = 0; k<3; k++)
+        mean[k] = mean[k]/(float)count;
 
     return mean;
 
@@ -113,7 +116,8 @@ typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_4(ImageConstPoint
 template<typename TImage>
 typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_8(ImageConstPointer input, ConstIterator inputIterator)
 {
-    int  mean=0;
+    itk::RGBPixel<int>  mean;
+    mean[0] = 0,mean[1] = 0, mean[2] = 0;
     TIndex PixelIndexCurrent;
     PixelIndexCurrent = inputIterator.GetIndex();
 
@@ -125,13 +129,19 @@ typename TImage::PixelType SmoothingFilter<TImage>::Neighbours_8(ImageConstPoint
         for(int y = -1; y <= 1; y ++)
         {
             PixelIndexCurrent[1] = inputIterator.GetIndex()[1] + y;
-            if(mean == 0)
+            if(mean[0] == 0 && mean[1] == 0 && mean[3] == 0)
                 mean = input->GetPixel(PixelIndexCurrent);
             else
-                mean = (mean + input->GetPixel(PixelIndexCurrent));
+            {
+                for(unsigned int j = 0; j<3; j++)
+                    mean[j] = (mean[j] + input->GetPixel(PixelIndexCurrent)[j]);
+            }
+
         }
     }
-    mean = mean/7;
+    mean[0] = mean[0]/7;
+    mean[1] = mean[1]/7;
+    mean[2] = mean[2]/7;
     return mean;
 
 }
