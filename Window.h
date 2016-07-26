@@ -29,6 +29,8 @@ public:
         QCheckBox *checkbox1_1;
         QCheckBox *checkbox1_2;
     QCheckBox *checkbox2;
+        QCheckBox *checkbox2_1;
+        QCheckBox *checkbox2_2;
 
     /** String **/
     QLineEdit *filenameInput;
@@ -52,6 +54,8 @@ public slots:
     void IfChecked2();
     void IfChecked1_1();
     void IfChecked1_2();
+    void IfChecked2_1();
+    void IfChecked2_2();
 
     /** Check if all items are good and begin the process **/
     void Confirm();
@@ -84,6 +88,11 @@ private:
             QGroupBox *m_Box1_1;
             QHBoxLayout *layoutbox1_1;
 
+            /** Box 1_2 : Slicer ITKSnap **/
+            void ManageBox1_2();
+            QGroupBox *m_Box1_2;
+            QHBoxLayout *layoutbox1_2;
+
         /** Box 2 : Files **/
         void ManageBox2();
         QGroupBox *m_Box2;
@@ -113,8 +122,9 @@ private:
         QTabWidget tab;
         QGroupBox *display;
         QGroupBox *display2;
-        /** Display images when user confirms (only 2D image) **/
-        void Display();
+        /** Display images when user confirms**/
+        void Display2D();
+        void Display3D();
 
 
 };

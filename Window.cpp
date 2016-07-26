@@ -49,10 +49,12 @@ void Window::ManageBox1()
         checkbox2 = new QCheckBox("3D");
         checkbox1->setChecked(true);
         ManageBox1_1();
+        ManageBox1_2();
 
         layoutbox1->addWidget(checkbox2);
         layoutbox1->addWidget(checkbox1);
         layoutbox1->addWidget(m_Box1_1);
+        layoutbox1->addWidget(m_Box1_2);
     m_Box1->setLayout(layoutbox1);
 
 }
@@ -75,6 +77,26 @@ void Window::ManageBox1_1()
         layoutbox1_1->addWidget(checkbox1_1);
         layoutbox1_1->addWidget(checkbox1_2);
     m_Box1_1->setLayout(layoutbox1_1);
+}
+
+
+
+/** Box 1_2, horizontal layoutbox1_2 :
+ *              *checkbox1 Slicer
+ *              *checkbox2 ITKSnap
+**/
+void Window::ManageBox1_2()
+{
+    m_Box1_2 = new QGroupBox("Display 3D image");
+        layoutbox1_2 = new QHBoxLayout;
+
+        checkbox2_1 = new QCheckBox("Slicer");
+        checkbox2_2 = new QCheckBox("ITKSnap");
+
+        layoutbox1_2->addWidget(checkbox2_1);
+        layoutbox1_2->addWidget(checkbox2_2);
+        m_Box1_2->hide();
+    m_Box1_2->setLayout(layoutbox1_2);
 }
 
 
@@ -182,7 +204,7 @@ void Window::ManageBox4()
 
 
 /** Display images (only for 2D image) when user confirm **/
-void Window::Display()
+void Window::Display2D()
 {
 
     if(Dimension == 2)
@@ -201,6 +223,30 @@ void Window::Display()
 }
 
 
+
+/** Display images (only for 3D image) when user confirm **/
+void Window::Display3D()
+{
+
+    if(checkbox2_1->checkState()==2)
+    {
+        std::string outputname = folder.toStdString() + '/' + filenameOutput->text().toStdString() + exten;
+        std::string strcommand = "slicer " + outputname + " 2";
+        const char *charcommand = strcommand.c_str();
+        popen(charcommand,"r");
+    }
+
+    if(checkbox2_2->checkState()==2)
+    {
+        std::string outputname = folder.toStdString() + '/' + filenameOutput->text().toStdString() + exten;
+        std::string strcommand = "itksnap " + outputname;
+        const char *charcommand = strcommand.c_str();
+        popen(charcommand,"r");
+    }
+}
+
+
+
 /** Checkboxs connect :
  * SLOTS :             SIGNALS :        OBJECTS :
  *   *IfChecked()       *clicked()          *checkboxs
@@ -211,9 +257,11 @@ void Window::CheckboxConnect()
     QObject::connect(checkbox1,SIGNAL(clicked(bool)),this,SLOT(IfChecked1()));
     QObject::connect(checkbox1,SIGNAL(stateChanged(int)),this,SLOT(ChangeBox1_1()));
         QObject::connect(checkbox1_1,SIGNAL(clicked(bool)),this,SLOT(IfChecked1_1()));
+        QObject::connect(checkbox1_2,SIGNAL(clicked(bool)),this,SLOT(IfChecked1_2()));
 
     QObject::connect(checkbox2,SIGNAL(clicked(bool)),this,SLOT(IfChecked2()));
-        QObject::connect(checkbox1_2,SIGNAL(clicked(bool)),this,SLOT(IfChecked1_2()));
+        QObject::connect(checkbox2_1,SIGNAL(clicked(bool)),this,SLOT(IfChecked2_1()));
+        QObject::connect(checkbox2_2,SIGNAL(clicked(bool)),this,SLOT(IfChecked2_2()));
 
 }
 
@@ -258,11 +306,13 @@ void Window::ChangeBox1_1()
     if(checkbox1->checkState()==0)
     {
         m_Box1_1->hide();
+        m_Box1_2->show();
         browse1->setToolTip(".nrrd .mha .mhd");
     }
 
     if(checkbox1->checkState() == 2)
     {
+        m_Box1_2->hide();
         m_Box1_1->show();
         browse1->setToolTip(".jpeg .jpg .png");
     }
@@ -353,6 +403,23 @@ void Window::IfChecked1_2()
     }
 }
 
+void Window::IfChecked2_1()
+{
+
+    if(2==checkbox2_1->checkState() || checkbox2_2->checkState()==2){
+        checkbox2_1->setChecked(true);
+        checkbox2_2->setChecked(false);
+    }
+}
+
+void Window::IfChecked2_2()
+{
+    if(2==checkbox2_2->checkState() || checkbox2_1->checkState()==2){
+        checkbox2_2->setChecked(true);
+        checkbox2_1->setChecked(false);
+    }
+}
+
 
 
 /** Check all items are good when we push on confirm **/
@@ -407,7 +474,10 @@ void Window::Confirm()
         TypeImageFilterDefine(Dimension,filenameInput->text().toStdString(),Neighbours,filenameOutput->text().toStdString(),folder.toStdString());
 
         //Display results
-        Display();
+        if(Dimension == 2)
+            Display2D();
+        else
+            Display3D();
     }
 
 }
