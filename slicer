@@ -1,0 +1,19 @@
+#!/bin/bash
+file=$PWD/$1
+cd /home/gaetan
+
+if [ $# -eq 0 ]
+then
+	./Documents/Stage/Slicer/Slicer
+fi
+
+if [ $# -eq 1 ]
+then
+	./Documents/Stage/Slicer/Slicer $file
+fi
+
+if [ $# -eq 2 ]
+then
+	./Documents/Stage/Slicer/Slicer $1
+fi 
+
