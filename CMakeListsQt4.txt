@@ -1,0 +1,39 @@
+# This is the root ITK CMakeLists file.
+cmake_minimum_required(VERSION 3.0)
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0003 NEW)
+endif()
+set(CMAKE_AUTOMOC ON)
+
+# This project is designed to be built outside the Insight source tree.
+project(SmoothingFilter)
+
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+file(
+GLOB_RECURSE
+source_files
+src/*.[ch]pp
+src/*.[ch]xx
+src/*.[ch]
+interface/*.[ch]pp
+interface/*.[ch]xx
+)
+
+# Find ITK.
+find_package(ITK REQUIRED)
+
+#Find Qt Package
+find_package(Qt4 4.4.3 REQUIRED QtGui)
+
+#ADD_DEFINITIONS( -O2 -Wall -Wextra -std=c++11)
+
+
+
+add_executable(SmoothingFilter
+  ${source_files}
+  ${UI_GENERATED})
+
+include(${ITK_USE_FILE})
+target_link_libraries(SmoothingFilter ${ITK_LIBRARIES} Qt4::QtGui)
