@@ -7,7 +7,6 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "QuickView.h"
 #include "itkRGBPixel.h"
 
 

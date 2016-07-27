@@ -154,7 +154,9 @@ void Window::ManageBox2_2()
         browse1 = new QPushButton("Select file");
         browse2 = new QPushButton("Select folder");
         browse1->setToolTip(".jpeg .jpg .png");
-        browse1->setToolTipDuration(2000);
+	#if QT_VERSION >= 0x050000
+        	browse1->setToolTipDuration(2000);
+	#endif
 
         layoutbox2_2->addWidget(browse1);
         layoutbox2_2->addWidget(browse2);
